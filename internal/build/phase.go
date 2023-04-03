@@ -39,8 +39,11 @@ func (p *Phase) Run(ctx context.Context) error {
 			return err
 		}
 	}
+	handler := func(bodyChan <-chan dcontainer.ContainerWaitOKBody, errChan <-chan error, reader io.Reader) error {
+		return nil
+	}
 
-	handler := container.DefaultHandler(p.infoWriter, p.errorWriter)
+	// handler := container.DefaultHandler(p.infoWriter, p.errorWriter)
 	if p.handler != nil {
 		handler = p.handler
 	}
