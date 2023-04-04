@@ -2,6 +2,7 @@ package build
 
 import (
 	"context"
+	"fmt"
 	"io"
 
 	"github.com/docker/docker/api/types"
@@ -40,6 +41,15 @@ func (p *Phase) Run(ctx context.Context) error {
 		}
 	}
 	handler := func(bodyChan <-chan dcontainer.ContainerWaitOKBody, errChan <-chan error, reader io.Reader) error {
+		select {
+		case body := <-bodyChan:
+			if body.StatusCode != 0 {
+				return fmt.Errorf("failed with status code: %d", body.StatusCode)
+			}
+		case err := <-errChan:
+			return err
+		}
+
 		return nil
 	}
 
